@@ -1,0 +1,26 @@
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+    <definition name="/loginPage" template="/WEB-INF/view/jsp/login/login.jsp"/>
+	
+	<definition name="mgr" template="/WEB-INF/view/layout/mgr/layout.jsp">
+        <put-attribute name="title" value="hello" />
+        <put-attribute name="header" value="/WEB-INF/view/layout/mgr/header.jsp" />
+        <put-attribute name="footer" value="/WEB-INF/view/layout/mgr/footer.jsp" />
+        <put-attribute name="body" value="" />
+    </definition>
+    
+    <definition name="/mgr/*" extends="mgr">
+        <put-attribute name="body" value="/WEB-INF/view/jsp/mgr/{1}.jsp" />
+    </definition>
+    
+    <definition name="/mgr/*/*" extends="mgr">
+        <put-attribute name="body" value="/WEB-INF/view/jsp/mgr/{1}/{2}.jsp" />
+    </definition>
+    
+    <definition name="/mgr/*/*/*" extends="mgr">
+        <put-attribute name="body" value="/WEB-INF/view/jsp/mgr/{1}/{2}/{3}.jsp" />
+    </definition>
+    
+
+</tiles-definitions>

@@ -23,5 +23,11 @@ public class MgrTbController {
 		ModelAndView mav = new ModelAndView("/mgr/tb/page");
 		return mav;
 	}
+	@RequestMapping("loginPage")
+	public ModelAndView loginPage(){
+		System.out.println("COME!");
+		ModelAndView mav = new ModelAndView("/loginPage");
+		return mav;
+	}
 	
 }
