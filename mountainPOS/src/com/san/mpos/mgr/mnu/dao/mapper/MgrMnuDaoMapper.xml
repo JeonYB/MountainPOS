@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.san.mpos.mgr.mnu.dao.MgrMnuDao">
+	<resultMap type="com.san.mpos.mgr.mnu.dto.MgrMnuCateDto" id="MgrMnuCateDto">
+		<result property="posId" 	column="pos_id" />
+		<result property="cateNo" 	column="cate_no" />
+		<result property="prevCateNo" 	column="prev_cate_no" />
+		<result property="cateNm" 	column="cate_nm" />
+		<result property="level" 	column="level" />
+	</resultMap>
+	<select id="getMenuCateList" parameterType="java.util.Map" resultMap="MgrMnuCateDto" >
+		 WITH RECURSIVE search_cate(pos_id, cate_no, prev_cate_no, cate_nm, LEVEL, PATH, CYCLE) AS (
+		        SELECT pos_id, g.cate_no, g.prev_cate_no, g.cate_nm, 0, ARRAY [g.cate_no], false
+		        FROM tb_m_menu_cate g
+		        WHERE pos_id = #{posId}
+		        AND use_flag = true
+		        AND g.prev_cate_no ='0'
+	        UNION ALL
+		        SELECT g.pos_id, g.cate_no, g.prev_cate_no, g.cate_nm,  LEVEL + 1, (path||g.cate_no)::varchar(10)[], g.cate_no = ANY(PATH)
+		        FROM tb_m_menu_cate g, search_cate sb
+		        WHERE g.pos_id = #{posId}
+		        AND use_flag = true
+		        AND g.prev_cate_no = sb.cate_no 
+				AND NOT CYCLE
+		    )
+	          SELECT pos_id, cate_no, prev_cate_no, cate_nm, level
+	          FROM search_cate ORDER BY PATH
+	</select>
+	<delete id="delMnuCate" parameterType="java.util.Map">
+		delete from tb_m_menu_cate
+		where pos_id = #{posId}
+	</delete>
+	<select id="getMnuSeq" resultType="string">
+		select lpad(nextval('sq_m_menu_cate')||'',10,'0')
+	</select>
+	<insert id="insertMnuCate" parameterType="com.san.mpos.mgr.mnu.dto.MgrMnuCateDto">
+		insert into tb_m_menu_cate
+	 		(pos_id, cate_no, prev_cate_no, cate_nm, use_flag, zrdt, zrer, zudt, zuer)
+		values
+		 (
+			#{posId}
+			,#{cateNo}
+			,#{prevCateNo}
+			,#{cateNm}
+			,'Y'
+			,to_Char(current_timestamp,'yyyymmddhh24miss')
+			,'JYB'
+			,to_Char(current_timestamp,'yyyymmddhh24miss')
+			,'JYB'
+		 )
+	</insert>
+	
+	<select id="getMenuList" resultType="java.util.HashMap">
+		select row_number() over(order by A.cate_no, b.menu_id) rnum,B.menu_id,A.cate_no, A.cate_nm, b.menu_nm, B.price, B.img_src, b.use_flag
+		from tb_m_menu_cate A, tb_m_menu B
+		where a.pos_id = b.pos_id
+		and a.cate_no = b.cate_no
+		and a.use_flag = true
+		and b.pos_id = #{posId}
+	</select>
+	
+	<select id="getMnuCateList" resultType="java.util.HashMap">
+		WITH RECURSIVE search_cate(cate_no, prev_cate_no, cate_nm, LEVEL, PATH, CYCLE) AS (
+			SELECT  g.cate_no, g.prev_cate_no, g.cate_nm, 0, ARRAY [g.cate_no], false
+			FROM tb_m_menu_cate g
+			WHERE pos_id = #{posId}
+			AND use_flag = true
+			AND g.prev_cate_no ='0'
+			UNION ALL
+			SELECT g.cate_no, g.prev_cate_no, g.cate_nm,  LEVEL + 1, (path||g.cate_no)::varchar(10)[], g.cate_no = ANY(PATH)
+			FROM tb_m_menu_cate g, search_cate sb
+			WHERE pos_id = #{posId}
+			AND use_flag = true
+			AND g.prev_cate_no = sb.cate_no 
+			AND NOT CYCLE
+		)
+		SELECT cate_no, level,cate_nm as cate_nm
+		FROM search_cate ORDER BY PATH
+	</select>
+	<insert id="insertMnu" parameterType="java.util.Map">
+		insert into tb_m_menu
+		 (pos_id, cate_no, menu_id, menu_nm, use_flag, menu_desc,img_src , price, zrdt, zrer, zudt, zuer)
+		values(
+			 #{posId}
+			 ,#{menuCate}
+			 ,lpad(nextval('sq_m_menu')||'',10,'0')
+			 ,#{menuNm}
+			 ,true
+			 ,#{description}
+			 ,#{menuImg}
+			 ,to_number(#{menuPrice},'9999999999')
+			,to_Char(current_timestamp,'yyyymmddhh24miss')
+			,'JYB'
+			,to_Char(current_timestamp,'yyyymmddhh24miss')
+			,'JYB'
+		)
+				
+	</insert>
+</mapper>

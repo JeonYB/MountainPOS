@@ -11,22 +11,41 @@
 	<meta name="author" content="JeonYB">
 	<title><tiles:insertAttribute name="title" /></title>
 	<link href="${ctx}/res/css/bootstrap.min.css" rel="stylesheet">
+	<link href="${ctx}/res/css/jquery-ui.min.css" rel="stylesheet">
+	<link href="${ctx}/res/css/jyb.css" rel="stylesheet">
 	<script type="text/javascript" src="${ctx }/res/js/jquery-1.11.1.min.js"></script>
 	<script type="text/javascript" src="${ctx }/res/js/angular.min.js"></script>
 	<script type="text/javascript" src="${ctx }/res/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="${ctx }/res/js/jquery-ui.min.js"></script>
+<script type="text/javascript">
+	var app = angular.module('mposApp',[]);
+</script>
+
+
+
+<!-- 
+   *@@                                  .@@*   @@@  *@@###@@@
+   .@@    .@@@*.    .@@@@*    **..@@@.    @@* @@@   *@@   *@@
+   .@@   @@   *@* .@@*  .@@*  @@@. .@@*    @@@@*    *@@@@@@*
+   .@@  @@@@@@@@@ @@@    .@@  @@.   @@*     @@*     *@@   .@@.
+.  @@@  .@@       .@@    @@*  @@*   @@*     @@*     *@@   .@@.
+@@@@.    .*@@@@@    *@@@@*.   @@.   @@*     @@.     *@@@@@@*
+                                                2015 . 04 . 17 
+ -->
+
 </head>
-<body>
+<body ng-app="mposApp">
 	<nav class="navbar navber-default">
 		<div class="container-fluid">
 			<tiles:insertAttribute name="header" />
 		</div>
 	</nav>
-	<div class="container">
-		<div id="body" class="row">
+	<div class="continer-fluid">
+		<div class="row">
 			<div class="col-lg-3 well">
 				<tiles:insertAttribute name="left" />
 			</div>
-			<div class="col-lg-8 col-lg-offset-1 well">
+			<div id="body" class="col-lg-8 col-lg-offset-1 well">
 				<tiles:insertAttribute name="body" />
 			</div>
 		</div>

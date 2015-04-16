@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.san.mpos.mgr.tb.dao.MgrTbDao">
+	<resultMap type="com.san.mpos.mgr.tb.dto.MgrTbDto" id="mgrTbDto">
+		<result property="maxRow" 	column="max_row" />
+		<result property="maxCol" 	column="max_col" />
+		<result property="posId" 	column="pos_id" />
+		<result property="gridRow" 	column="grid_row" />
+		<result property="gridCol" 	column="grid_col" />
+		<result property="tableId" 	column="table_id" />
+		<result property="useFlag" 	column="use_falg" />
+		<result property="tableNm" 	column="table_nm" />
+		<result property="maxSeat" 	column="max_seat" />
+	</resultMap>
+	
+	<select id="getTable" parameterType="java.util.Map" resultMap="mgrTbDto" >
+		select 
+			 max(grid_row)over()+1 as max_row
+			,max(grid_col)over()+1 as max_col
+			,pos_id, grid_row, grid_col, table_id, use_falg, table_nm, max_seat
+		from tb_m_tab A
+		where pos_id = #{posId}
+	</select>
+	
+	<insert id="insertTable" parameterType="com.san.mpos.mgr.tb.dto.MgrTbDto">
+		insert into tb_m_tab
+			(pos_id, grid_row, grid_col, table_id, use_falg, table_nm, max_seat, zrdt, zrer, zudt, zuer)
+		values (
+			#{posId}
+			,#{gridRow}
+			,#{gridCol}
+			,#{tableId}
+			,#{useFlag}
+			,#{tableNm}
+			,#{maxSeat}
+			,to_Char(current_timestamp,'yyyymmddhh24miss')
+			,'JYB'
+			,to_Char(current_timestamp,'yyyymmddhh24miss')
+			,'JYB'
+		)
+	</insert>
+	<delete id="delTable" parameterType="java.util.Map">
+		delete from tb_m_tab
+		where pos_id = #{posId}
+	</delete>
+	
+</mapper>
